@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+	<link rel="stylesheet" type="text/css" href="style.css">
+</head>
+<body>
+  <div class="container">
+  <div class="calc-body">
+    <div class="calc-screen" id="history">
+      <div class="calc-operation" id="history-value"></div>
+      <div class="calc-history" id="output"><span class="blink-me" id="output-value"></span></div>
+    </div>
+    <div class="calc-button-row">
+      <div class="oprater" id="clear">C</div>
+      <div class="oprater" id="backspace">CE</div>
+      <div class="oprater" id="%">%</div>
+      <div class="oprater" id="/">/</div>
+    </div>
+    <div class="calc-button-row">
+      <div class="button" id="7">7</div>
+      <div class="button" id="8">8</div>
+      <div class="button" id="9">9</div>
+      <div class="oprater" id="*">x</div>
+    </div>
+    <div class="calc-button-row">
+      <div class="button" id="4">4</div>
+      <div class="button" id="5">5</div>
+      <div class="button" id="6">6</div>
+      <div class="oprater" id="−">−</div>
+    </div>
+    <div class="calc-button-row">
+      <div class="button" id="1">1</div>
+      <div class="button" id="2">2</div>
+      <div class="button" id="3">3</div>
+      <div class="oprater" id="+">+</div>
+    </div>
+    <div class="calc-button-row">
+      <div class="button" id=".">.</div>
+      <div class="button" id="0">0</div>
+      <div class="button">
+        <</div>
+          <div class="oprater" id="=">=</div>
+      </div>
+    </div>
+  </div>
+  <script type="text/javascript">
+ function getHistory(){
+	return document.getElementById("history-value").innerText;
+}
+function printHistory(num){
+	document.getElementById("history-value").innerText=num;
+}
+function getOutput(){
+	return document.getElementById("output-value").innerText;
+}
+function printOutput(num){
+	if(num==""){
+		document.getElementById("output-value").innerText=num;
+	}
+	else{
+		document.getElementById("output-value").innerText=getFormattedNumber(num);
+	}	
+}
+function getFormattedNumber(num){
+	if(num=="-"){
+		return "";
+	}
+	var n = Number(num);
+	var value = n.toLocaleString("en");
+	return value;
+}
+function reverseNumberFormat(num){
+	return Number(num.replace(/,/g,''));
+}
+var oprater = document.getElementsByClassName("oprater");
+for(var i =0;i<oprater.length;i++){
+	oprater[i].addEventListener('click',function(){
+		if(this.id=="clear"){
+			printHistory("");
+			printOutput("");
+		}
+		else if(this.id=="backspace"){
+			var output=reverseNumberFormat(getOutput()).toString();
+			if(output){//if output has a value
+				output= output.substr(0,output.length-1);
+				printOutput(output);
+			}
+		}
+		else{
+			var output=getOutput();
+			var history=getHistory();
+			if(output==""&&history!=""){
+				if(isNaN(history[history.length-1])){
+					history= history.substr(0,history.length-1);
+				}
+			}
+			if(output!="" || history!=""){
+				output= output==""?output:reverseNumberFormat(output);
+				history=history+output;
+				if(this.id=="="){
+					var result=eval(history);
+					printOutput(result);
+					printHistory("");
+				}
+				else{
+					history=history+this.id;
+					printHistory(history);
+					printOutput("");
+				}
+			}
+		}
+		
+	});
+}
+var button = document.getElementsByClassName("button");
+for(var i =0;i<button.length;i++){
+	button[i].addEventListener('click',function(){
+		var output=reverseNumberFormat(getOutput());
+		if(output!=NaN){ 
+			output=output+this.id;
+			printOutput(output);
+		}
+	});
+}
+  </script>
+
+</body>
+</html>
